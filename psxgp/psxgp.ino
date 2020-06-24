@@ -47,6 +47,7 @@ void loop()
   gp.setButtonState(7, data & psxL1);
   gp.setButtonState(8, data & psxR2);
   gp.setButtonState(9, data & psxL2);
+  gp.sendUpdate();
   unsigned long stop_watch = micros();
   Serial.println((stop_watch - start_watch));
   //faut cumuler les valeurs ici pis faire un seul send state a la fin

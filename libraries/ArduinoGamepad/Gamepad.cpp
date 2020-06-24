@@ -100,31 +100,26 @@ void Gamepad::setButtonState(uint8_t button, bool state)
 {
 	if(state == true) bitSet(reportData.buttons, button);
 	else bitClear(reportData.buttons, button);
-	sendUpdate();
 }
 
 void Gamepad::setLeftXaxis (int8_t value)
 {
 	reportData.leftXaxis = value;
-	sendUpdate();
 }
 
 void Gamepad::setLeftYaxis (int8_t value)
 {
 	reportData.leftYaxis = value;
-	sendUpdate();
 }
 
 void Gamepad::setRightXaxis(int8_t value)
 {
 	reportData.rightXaxis = value;
-	sendUpdate();
 }
 
 void Gamepad::setRightYaxis(int8_t value)
 {
 	reportData.rightYaxis = value;
-	sendUpdate();
 }
 
 void Gamepad::sendUpdate()
