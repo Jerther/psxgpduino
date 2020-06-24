@@ -122,8 +122,8 @@ void Gamepad::setRightYaxis(int8_t value)
 	reportData.rightYaxis = value;
 }
 
-void Gamepad::sendUpdate()
+int Gamepad::sendUpdate()
 {
-	HID().SendReport(0x03, &reportData, sizeof(gamepad_report_struct));
+	return HID().SendReport(0x03, &reportData, sizeof(gamepad_report_struct));
 }
 #endif

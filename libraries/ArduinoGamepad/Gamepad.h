@@ -42,7 +42,7 @@ private:
 public:
 	Gamepad(bool useZRx = false);
 	
-	void sendUpdate();
+	int sendUpdate();
 	
 	void setButtonState(uint8_t button, bool state);
 	void setLeftXaxis (int8_t value);
