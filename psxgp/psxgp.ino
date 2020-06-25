@@ -5,7 +5,7 @@
 #define PSX_CMD_PIN  14
 #define PSX_ATT_PIN  10
 #define PSX_CLK_PIN  16
-#define PSX_DELAY    7
+#define PSX_DELAY    2
 
 Psx Psx;
 Gamepad gp;
@@ -22,7 +22,7 @@ void loop()
 {
   unsigned long start_watch = micros();
   unsigned int data = Psx.read();
-
+  
   if (data & psxLeft)
     gp.setLeftXaxis(-127);
   else if (data & psxRight)
@@ -51,4 +51,5 @@ void loop()
     delay(1000);
   unsigned long stop_watch = micros();
   Serial.println((stop_watch - start_watch));
+
 }
