@@ -24,63 +24,65 @@
 */
 #include "Psx.h"
 
+#define DATA_PIN         15
+#define DATA_DDR         DDRB
+#define DATA_PORT        PINB       // PORTB input
+#define DATA_PORT_INDEX  1          // PB1
+#define DATA_MASK        B00000010  // index 1
+
+#define CMD_PIN         14
+#define CMD_DDR         DDRB
+#define CMD_PORT        PORTB       // PORTB output
+#define CMD_PORT_INDEX  3           // PB3
+
+#define CLOCK_PIN        16
+#define CLOCK_DDR        DDRB
+#define CLOCK_PORT       PORTB      // PORTB output
+#define CLOCK_PORT_INDEX 2          // PB2
+
+#define ATT_PIN         10
+#define ATT_DDR         DDRB
+#define ATT_PORT        PORTB       // PORTB output
+#define ATT_PORT_INDEX  6           // PB6
+
+
+
 Psx::Psx()
 {
+	// pinMode and digitalWrite do all sorts of initial things.
+	// it's WAY simpler just to use them instead of toying with registers.
+	pinMode(DATA_PIN, INPUT_PULLUP);
+	
+	pinMode(CMD_PIN, OUTPUT);
+	digitalWrite(CMD_PIN, LOW);
+
+	pinMode(ATT_PIN, OUTPUT);
+	digitalWrite(ATT_PIN, HIGH);
+
+	pinMode(CLOCK_PIN, OUTPUT);
+	digitalWrite(CLOCK_PIN, HIGH);
 }
 
 byte Psx::shift(byte _dataOut)							// Does the actual shifting, both in and out simultaneously
 {
-	_temp = 0;
-	_dataIn = 0;
-
 	for (_i = 0; _i <= 7; _i++)
 	{
-		
-		if ( _dataOut & (1 << _i) ) digitalWrite(_cmndPin, HIGH);	// Writes out the _dataOut bits
-		else digitalWrite(_cmndPin, LOW);
-
-		digitalWrite(_clockPin, HIGH);
-		
-		
-		_temp = digitalRead(_dataPin);					// Reads the data pin
-		if (_temp)
-		{
-			_dataIn = _dataIn | (B10000000 >> _i);		// Shifts the read data into _dataIn
-		}
-		delayMicroseconds(_delay);
-
-		digitalWrite(_clockPin, LOW);
-		delayMicroseconds(_delay);
-		
+		bitClear(CLOCK_PORT, CLOCK_PORT_INDEX);
+		if (bitRead(_dataOut, _i))
+			bitSet(CMD_PORT, CMD_PORT_INDEX);
+		else
+			bitClear(CMD_PORT, CMD_PORT_INDEX);
+		delayMicroseconds(10);
+		bitSet(CLOCK_PORT, CLOCK_PORT_INDEX);
+		bitWrite(_dataIn, 7 - _i, (DATA_PORT & DATA_MASK) == B00000010);
+		delayMicroseconds(6);
 	}
 	return _dataIn;
 }
 
-
-void Psx::setupPins(byte dataPin, byte cmndPin, byte attPin, byte clockPin, byte delay)
-{
-	pinMode(dataPin, INPUT);
-	digitalWrite(dataPin, HIGH);	// Turn on internal pull-up
-	_dataPin = dataPin;
-
-	pinMode(cmndPin, OUTPUT);
-	_cmndPin = cmndPin;
-
-	pinMode(attPin, OUTPUT);
-	_attPin = attPin;
-	digitalWrite(_attPin, HIGH);
-
-	pinMode(clockPin, OUTPUT);
-	_clockPin = clockPin;
-	digitalWrite(_clockPin, HIGH);
-	
-	_delay = delay;
-}
-
-
 unsigned int Psx::read()
 {
-	digitalWrite(_attPin, LOW);
+	bitClear(ATT_PORT, ATT_PORT_INDEX);
 
 	shift(0x01);
 	shift(0x42);
@@ -89,7 +91,7 @@ unsigned int Psx::read()
 	_data1 = ~shift(0xFF);
 	_data2 = ~shift(0xFF);
 
-	digitalWrite(_attPin, HIGH);
+	bitSet(ATT_PORT, ATT_PORT_INDEX);
 
 	_dataOut = (_data2 << 8) | _data1;
 

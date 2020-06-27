@@ -1,18 +1,11 @@
 #include <Psx.h>
 #include <Gamepad.h>
 
-#define PSX_DATA_PIN 15
-#define PSX_CMD_PIN  14
-#define PSX_ATT_PIN  10
-#define PSX_CLK_PIN  16
-#define PSX_DELAY    2
-
 Psx Psx;
 Gamepad gp;
 
 void setup()
 {
-  Psx.setupPins(PSX_DATA_PIN, PSX_CMD_PIN, PSX_ATT_PIN, PSX_CLK_PIN, PSX_DELAY);
   Serial.begin(115200);
   delay(2000);
   Serial.println("START!");
