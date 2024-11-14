@@ -36,10 +36,10 @@ void loop()
   gp.setButtonState(3, data & psxX);
   gp.setButtonState(4, data & psxO);
   gp.setButtonState(5, data & psxTri);
-  gp.setButtonState(6, data & psxR1);
-  gp.setButtonState(7, data & psxL1);
-  gp.setButtonState(8, data & psxR2);
-  gp.setButtonState(9, data & psxL2);
+  gp.setButtonState(6, data & psxL1);
+  gp.setButtonState(7, data & psxR1);
+  gp.setButtonState(8, data & psxL2);
+  gp.setButtonState(9, data & psxR2);
   if(gp.sendUpdate() < 0)
     delay(1000);
   unsigned long stop_watch = micros();
